@@ -30,13 +30,13 @@ def eval_metrics(actual, pred):
     return rmse, mae, r2
 
 
-class MyClass(mlflow.pyfunc.PythonModel):
-    def __init__(self):
-        pass
-
-    def predict(self, context, model_input):
-
-        pass
+# class MyClass(mlflow.pyfunc.PythonModel):
+#     def __init__(self):
+#         pass
+#
+#     def predict(self, context, model_input):
+#
+#         pass
 
 
 if __name__ == "__main__":
@@ -63,8 +63,10 @@ if __name__ == "__main__":
     train_y = train[["quality"]]
     test_y = test[["quality"]]
 
-    alpha = float(sys.argv[1]) if len(sys.argv) > 1 else 0.5
-    l1_ratio = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5
+    alpha = float(sys.argv[1]) if len(sys.argv) > 1 else 0.6
+    l1_ratio = float(sys.argv[2]) if len(sys.argv) > 2 else 0.6
+
+    mlflow.set_tracking_uri('http://127.0.0.1:5000')
 
     with mlflow.start_run(run_name='var1') as run:
         lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
@@ -100,7 +102,7 @@ if __name__ == "__main__":
             with open(file_path, 'wb') as file:
                 s = pickle.dump(lr, file)
                 # my_model = Model(artifact_path=file_path, run_id=run.info.run_id)
-                mlflow.pyfunc.log_model(artifact_path=file_path, python_model=MyClass())
+                # mlflow.pyfunc.log_model(artifact_path=file_path, python_model=MyClass())
                 os.remove(file_path)
                 # my_model.add_flavor(name='mlflow.pyfunc')
                 # my_model.save('out.pkl')
